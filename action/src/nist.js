@@ -287,8 +287,9 @@ function evaluateCheck(resource, check, control) {
 
   switch (check.rule) {
     case 'exists':
-      // Just flags that this resource type exists — used for documentation checks
-      violated = false; // Presence is fine; absence would be caught differently
+      if (check.field) {
+        violated = config[check.field] === undefined || config[check.field] === null;
+      }
       break;
 
     case 'equals':
