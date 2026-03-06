@@ -1,0 +1,23 @@
+name = "pipelineiq1-worker"
+main = "worker/index.js"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Free tier — no paid plan needed
+# 100,000 requests/day, 10ms CPU/request
+
+[[kv_namespaces]]
+binding = "PIPELINEIQ_KV"
+id = "REPLACE_WITH_YOUR_KV_ID"          # Run: wrangler kv:namespace create PIPELINEIQ_KV
+preview_id = "REPLACE_WITH_PREVIEW_ID"
+
+[vars]
+ENVIRONMENT = "production"
+
+# Secrets (set via: wrangler secret put SECRET_NAME)
+# SUPABASE_URL
+# SUPABASE_SERVICE_KEY
+
+[env.dev]
+name = "pipelineiq1-worker-dev"
+vars = { ENVIRONMENT = "development" }

@@ -1,0 +1,22 @@
+{
+  "name": "pipelineiq-action",
+  "version": "1.0.0",
+  "description": "AI-powered infrastructure compliance, drift detection, and auto-diagramming",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "build": "npx @vercel/ncc build src/index.js -o dist --source-map --license licenses.txt",
+    "test": "node --test src/__tests__/*.test.js",
+    "dev": "node src/index.js"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "^0.38.1"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}

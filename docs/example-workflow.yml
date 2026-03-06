@@ -1,0 +1,80 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# HOW TO USE PIPELINEIQ IN YOUR REPO
+# Copy this file to: .github/workflows/pipelineiq.yml
+# ──────────────────────────────────────────────────────────────────────────────
+
+name: PipelineIQ — Infrastructure Compliance
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - '**.tf'
+      - '**.bicep'
+      - '**.json'
+  pull_request:
+    branches: [main]
+    paths:
+      - '**.tf'
+      - '**.bicep'
+
+jobs:
+  infraguard:
+    name: Infrastructure Compliance Scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write    # needed to post PR comments
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: PipelineIQ Scan
+        uses: pipelineiq1/pipelineiq@v1
+        id: scan
+        with:
+          # Path to your Terraform / IaC files
+          iac_path: './terraform'
+
+          # Compliance framework: nist-800-53 | cis-benchmark | soc2 | all
+          compliance_level: 'nist-800-53'
+
+          # Block the deploy if critical violations found (admin-gated)
+          enforce: false
+
+          # Auto-generate architecture diagrams
+          generate_diagram: true
+
+          # Post AI compliance report as PR comment
+          post_pr_comment: true
+
+          # Minimum severity to trigger a block (when enforce: true)
+          # Options: critical | high | medium
+          severity_threshold: 'critical'
+
+        env:
+          # Get your free token at pipelineiq.dev
+          PIPELINEIQ_TOKEN: ${{ secrets.PIPELINEIQ_TOKEN }}
+
+          # Optional: Enable AI-powered reports (free at groq.com)
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+
+          # Auto-provided by GitHub — needed for PR comments
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Use the outputs in subsequent steps
+      - name: Check compliance results
+        run: |
+          echo "Compliance Score: ${{ steps.scan.outputs.compliance_score }}/100"
+          echo "Violations: ${{ steps.scan.outputs.violations_count }}"
+          echo "Critical: ${{ steps.scan.outputs.critical_count }}"
+          echo "Drift Detected: ${{ steps.scan.outputs.drift_detected }}"
+
+      # Optional: Fail if score drops below threshold
+      - name: Enforce minimum score
+        if: steps.scan.outputs.compliance_score < 70
+        run: |
+          echo "⚠️  Compliance score ${{ steps.scan.outputs.compliance_score }}/100 is below minimum threshold of 70"
+          # Uncomment to enforce:
+          # exit 1

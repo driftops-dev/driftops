@@ -1,0 +1,105 @@
+name: Deploy PipelineIQ
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ── Test the action itself ──────────────────────────────────────────────────
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: action/package.json
+
+      - name: Install dependencies
+        working-directory: action
+        run: npm ci
+
+      - name: Run tests
+        working-directory: action
+        run: npm test
+
+  # ── Deploy Cloudflare Worker ────────────────────────────────────────────────
+  deploy-worker:
+    name: Deploy Worker
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy
+
+  # ── Deploy Dashboard to Cloudflare Pages ───────────────────────────────────
+  deploy-dashboard:
+    name: Deploy Dashboard
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install & Build dashboard
+        working-directory: dashboard
+        run: |
+          npm ci
+          npm run build
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          VITE_WORKER_URL: ${{ secrets.WORKER_URL }}
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dashboard/dist --project-name=pipelineiq
+
+  # ── Build & publish GitHub Action ──────────────────────────────────────────
+  build-action:
+    name: Build Action
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install & bundle action
+        working-directory: action
+        run: |
+          npm ci
+          npm run build
+
+      - name: Commit bundled action
+        run: |
+          git config user.name "PipelineIQ Bot"
+          git config user.email "bot@pipelineiq.dev"
+          git add action/dist
+          git diff --staged --quiet || git commit -m "chore: bundle action [skip ci]"
+          git push

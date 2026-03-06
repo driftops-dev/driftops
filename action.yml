@@ -1,0 +1,62 @@
+name: 'PipelineIQ'
+description: 'AI-powered infrastructure compliance, drift detection, and auto-diagramming for your pipeline'
+author: 'PipelineIQ'
+
+branding:
+  icon: 'shield'
+  color: 'green'
+
+inputs:
+  iac_path:
+    description: 'Path to your IaC files (Terraform, ARM, Bicep, CDK)'
+    required: true
+    default: './terraform'
+
+  compliance_level:
+    description: 'Compliance framework to benchmark against'
+    required: false
+    default: 'nist-800-53'
+    # options: nist-800-53, cis-benchmark, soc2, all
+
+  enforce:
+    description: 'Block the pipeline if critical violations are found'
+    required: false
+    default: 'false'
+
+  generate_diagram:
+    description: 'Auto-generate architecture diagrams on each scan'
+    required: false
+    default: 'true'
+
+  post_pr_comment:
+    description: 'Post AI compliance report as a PR comment'
+    required: false
+    default: 'true'
+
+  severity_threshold:
+    description: 'Minimum severity to trigger a block (critical, high, medium)'
+    required: false
+    default: 'critical'
+
+outputs:
+  compliance_score:
+    description: 'Overall compliance score (0-100)'
+
+  violations_count:
+    description: 'Total number of violations found'
+
+  critical_count:
+    description: 'Number of critical violations'
+
+  drift_detected:
+    description: 'Whether infrastructure drift was detected (true/false)'
+
+  diagram_url:
+    description: 'URL of the generated architecture diagram'
+
+  report_url:
+    description: 'URL of the full compliance report in the dashboard'
+
+runs:
+  using: 'node20'
+  main: 'action/dist/index.js'
