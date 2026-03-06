@@ -15,7 +15,7 @@ export default function Sidebar({ page, setPage, user, onSignOut }) {
       <div style={styles.logo}>
         <div style={styles.logoIcon}>🧠</div>
         <div>
-          <div style={styles.logoText}>PipelineIQ</div>
+          <div style={styles.logoText}>DriftOps</div>
           <div style={styles.logoSub}>Infrastructure Intelligence</div>
         </div>
       </div>
@@ -42,8 +42,8 @@ export default function Sidebar({ page, setPage, user, onSignOut }) {
       <div style={styles.installBox}>
         <div style={styles.installLabel}>Quick Install</div>
         <div style={styles.installCode}>
-          uses: pipelineiq/<br />
-          &nbsp;&nbsp;pipelineiq@v1
+          uses: driftops/<br />
+          &nbsp;&nbsp;driftops@v1
         </div>
       </div>
 

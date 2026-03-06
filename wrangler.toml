@@ -1,4 +1,4 @@
-name = "pipelineiq1-worker"
+name = "driftops-dev-worker"
 main = "worker/index.js"
 compatibility_date = "2024-01-01"
 compatibility_flags = ["nodejs_compat"]
@@ -7,8 +7,8 @@ compatibility_flags = ["nodejs_compat"]
 # 100,000 requests/day, 10ms CPU/request
 
 [[kv_namespaces]]
-binding = "PIPELINEIQ_KV"
-id = "REPLACE_WITH_YOUR_KV_ID"          # Run: wrangler kv:namespace create PIPELINEIQ_KV
+binding = "DRIFTOPS_KV"
+id = "REPLACE_WITH_YOUR_KV_ID"          # Run: wrangler kv:namespace create DRIFTOPS_KV
 preview_id = "REPLACE_WITH_PREVIEW_ID"
 
 [vars]
@@ -19,5 +19,5 @@ ENVIRONMENT = "production"
 # SUPABASE_SERVICE_KEY
 
 [env.dev]
-name = "pipelineiq1-worker-dev"
+name = "driftops-dev-worker-dev"
 vars = { ENVIRONMENT = "development" }

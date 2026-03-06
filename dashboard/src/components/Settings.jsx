@@ -27,14 +27,14 @@ export default function Settings({ user }) {
     <div style={styles.page}>
       <div style={styles.header}>
         <h1 style={styles.title}>Settings</h1>
-        <div style={styles.subtitle}>Configure PipelineIQ for your organization</div>
+        <div style={styles.subtitle}>Configure DriftOps for your organization</div>
       </div>
 
       {/* API Token */}
       <div style={styles.section}>
         <div style={styles.sectionTitle}>🔑 API Token</div>
         <div style={styles.sectionDesc}>
-          Add this token as <code style={styles.code}>PIPELINEIQ_TOKEN</code> in your GitHub repo secrets to enable drift detection and state storage.
+          Add this token as <code style={styles.code}>DRIFTOPS_TOKEN</code> in your GitHub repo secrets to enable drift detection and state storage.
         </div>
         {!token ? (
           <button onClick={generateToken} disabled={generating} style={styles.btn}>
@@ -57,7 +57,7 @@ export default function Settings({ user }) {
       <div style={styles.section}>
         <div style={styles.sectionTitle}>⚡ Enforce Mode</div>
         <div style={styles.sectionDesc}>
-          When enabled, PipelineIQ will block deploys that introduce violations above the severity threshold. This is a global setting — you can also override per-repo in your workflow YAML.
+          When enabled, DriftOps will block deploys that introduce violations above the severity threshold. This is a global setting — you can also override per-repo in your workflow YAML.
         </div>
         <div style={styles.toggleRow}>
           <div>
@@ -114,19 +114,19 @@ export default function Settings({ user }) {
       {/* Install Instructions */}
       <div style={styles.section}>
         <div style={styles.sectionTitle}>📋 Quick Install</div>
-        <div style={styles.sectionDesc}>Add this to <code style={styles.code}>.github/workflows/pipelineiq.yml</code> in any repo:</div>
+        <div style={styles.sectionDesc}>Add this to <code style={styles.code}>.github/workflows/driftops.yml</code> in any repo:</div>
         <div style={styles.codeBlock}>
           <div style={styles.codeHeader}>
-            <span>pipelineiq.yml</span>
+            <span>driftops.yml</span>
           </div>
-          <pre style={styles.codePre}>{`- name: PipelineIQ Scan
-  uses: pipelineiq1/pipelineiq@v1
+          <pre style={styles.codePre}>{`- name: DriftOps Scan
+  uses: driftops-dev/driftops@v1
   with:
     iac_path: './terraform'
     compliance_level: 'nist-800-53'
     enforce: false
   env:
-    PIPELINEIQ_TOKEN: \${{ secrets.PIPELINEIQ_TOKEN }}
+    DRIFTOPS_TOKEN: \${{ secrets.DRIFTOPS_TOKEN }}
     GROQ_API_KEY: \${{ secrets.GROQ_API_KEY }}
     GITHUB_TOKEN: \${{ secrets.GITHUB_TOKEN }}`}
           </pre>

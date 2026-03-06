@@ -1,4 +1,4 @@
-# PipelineIQ — Complete Setup Guide
+# DriftOps — Complete Setup Guide
 # From zero to deployed in under 30 minutes
 
 ---
@@ -14,18 +14,18 @@
 ## Step 1 — GitHub Setup (5 min)
 
 1. Create org at github.com/organizations/new
-   - Name: pipelineiq
+   - Name: driftops
    - Plan: Free
 
-2. Create repo: github.com/pipelineiq1/pipelineiq
+2. Create repo: github.com/driftops-dev/driftops
    - Visibility: Private
    - Add README: No (we have one)
 
 3. Push the code:
    ```bash
-   cd pipelineiq
+   cd driftops
    git init
-   git remote add origin git@github.com:pipelineiq1/pipelineiq.git
+   git remote add origin git@github.com:driftops-dev/driftops.git
    git add .
    git commit -m "feat: initial POC — scanner, differ, NIST engine, worker, dashboard"
    git push -u origin main
@@ -36,7 +36,7 @@
 ## Step 2 — Supabase Setup (5 min)
 
 1. Go to supabase.com → New Project
-   - Name: pipelineiq
+   - Name: driftops
    - Password: save it somewhere safe
    - Region: pick closest to you
 
@@ -58,9 +58,9 @@
 2. Login: wrangler login
 3. Create KV namespace:
    ```bash
-   wrangler kv:namespace create PIPELINEIQ_KV
+   wrangler kv:namespace create DRIFTOPS_KV
    # Copy the ID into wrangler.toml
-   wrangler kv:namespace create PIPELINEIQ_KV --preview
+   wrangler kv:namespace create DRIFTOPS_KV --preview
    # Copy preview ID into wrangler.toml
    ```
 4. Set secrets:
@@ -71,7 +71,7 @@
 5. Deploy worker:
    ```bash
    wrangler deploy
-   # Note the worker URL: pipelineiq-worker.YOUR-SUBDOMAIN.workers.dev
+   # Note the worker URL: driftops-worker.YOUR-SUBDOMAIN.workers.dev
    ```
 
 ### Pages (dashboard):
@@ -79,8 +79,8 @@
 2. cp .env.example .env.local
 3. Fill in VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_WORKER_URL
 4. npm run build
-5. wrangler pages deploy dist --project-name=pipelineiq
-   - Note your dashboard URL: pipelineiq.pages.dev
+5. wrangler pages deploy dist --project-name=driftops
+   - Note your dashboard URL: driftops.pages.dev
 
 ---
 
@@ -143,11 +143,11 @@ You should see:
 ## Step 7 — Install In Any Repo
 
 Copy docs/example-workflow.yml to:
-.github/workflows/pipelineiq.yml
+.github/workflows/driftops.yml
 
-Add your PIPELINEIQ_TOKEN secret (generate from dashboard → Settings).
+Add your DRIFTOPS_TOKEN secret (generate from dashboard → Settings).
 
-Push a commit with a .tf file. Watch PipelineIQ run in the Actions tab.
+Push a commit with a .tf file. Watch DriftOps run in the Actions tab.
 
 ---
 
@@ -187,5 +187,5 @@ Push a commit with a .tf file. Watch PipelineIQ run in the Actions tab.
 | Cloudflare   | $0      | Pages + Workers free tier |
 | Supabase     | $0      | Free tier (500MB) |
 | Groq AI      | $0      | Free tier (unlimited for now) |
-| Domain       | $0      | use pipelineiq.pages.dev |
+| Domain       | $0      | use driftops.pages.dev |
 | **TOTAL**    | **$0**  | |

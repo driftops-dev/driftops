@@ -1,4 +1,4 @@
-name: Deploy PipelineIQ
+name: Deploy DriftOps
 
 on:
   push:
@@ -74,7 +74,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy dashboard/dist --project-name=pipelineiq
+          command: pages deploy dashboard/dist --project-name=driftops
 
   # ── Build & publish GitHub Action ──────────────────────────────────────────
   build-action:
@@ -98,8 +98,8 @@ jobs:
 
       - name: Commit bundled action
         run: |
-          git config user.name "PipelineIQ Bot"
-          git config user.email "bot@pipelineiq.dev"
+          git config user.name "DriftOps Bot"
+          git config user.email "bot@driftops.dev"
           git add action/dist
           git diff --staged --quiet || git commit -m "chore: bundle action [skip ci]"
           git push

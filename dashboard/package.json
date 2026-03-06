@@ -1,5 +1,5 @@
 {
-  "name": "pipelineiq-dashboard",
+  "name": "driftops-dashboard",
   "version": "1.0.0",
   "type": "module",
   "scripts": {

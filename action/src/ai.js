@@ -1,5 +1,5 @@
 /**
- * PipelineIQ — AI Engine
+ * DriftOps — AI Engine
  * Uses Groq's free API tier (Llama 3) to generate human-readable
  * compliance reports, explain violations, and suggest remediations
  *
@@ -35,7 +35,7 @@ async function generateComplianceReport({ snapshot, diff, violations, compliance
         messages: [
           {
             role: 'system',
-            content: `You are PipelineIQ, an expert AI infrastructure security and compliance analyst.
+            content: `You are DriftOps, an expert AI infrastructure security and compliance analyst.
 You analyze Terraform infrastructure changes and NIST 800-53 compliance violations.
 You write clear, actionable reports for DevOps engineers.
 Always be specific about what needs to change and why it matters.
@@ -145,7 +145,7 @@ function buildFallbackReport({ snapshot, diff, violations, complianceScore }) {
 
   const scoreEmoji = complianceScore >= 80 ? '🟢' : complianceScore >= 60 ? '🟡' : '🔴';
 
-  let report = `## PipelineIQ Compliance Report\n\n`;
+  let report = `## DriftOps Compliance Report\n\n`;
   report += `${scoreEmoji} **Compliance Score: ${complianceScore}/100**\n\n`;
   report += `**Resources scanned:** ${snapshot.resource_count} | `;
   report += `**Violations:** ${violations.length} (${critical.length} critical, ${high.length} high, ${medium.length} medium)\n\n`;
@@ -190,7 +190,7 @@ function formatPRComment({ report, complianceScore, diff, violations, blocked })
   const statusEmoji = blocked ? '🚫' : complianceScore >= 80 ? '✅' : '⚠️';
   const statusText = blocked ? 'BLOCKED — Critical violations found' : 'Passed';
 
-  return `## ${statusEmoji} PipelineIQ — Infrastructure Compliance Report
+  return `## ${statusEmoji} DriftOps — Infrastructure Compliance Report
 
 ${scoreBar}
 
@@ -204,7 +204,7 @@ ${scoreBar}
 ${report.report}
 
 ---
-<sub>🧠 Powered by PipelineIQ • NIST 800-53 Rev 5 • <a href="https://pipelineiq.dev">pipelineiq.dev</a></sub>
+<sub>🧠 Powered by DriftOps • NIST 800-53 Rev 5 • <a href="https://driftops.dev">driftops.dev</a></sub>
 `;
 }
 

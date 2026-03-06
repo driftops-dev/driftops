@@ -1,5 +1,5 @@
 {
-  "name": "pipelineiq-action",
+  "name": "driftops-action",
   "version": "1.0.0",
   "description": "AI-powered infrastructure compliance, drift detection, and auto-diagramming",
   "main": "src/index.js",

@@ -1,4 +1,4 @@
-# PipelineIQ 🧠
+# DriftOps 🧠
 
 > AI-powered infrastructure compliance, drift detection, and auto-diagramming — as a single pipeline step.
 
@@ -9,7 +9,7 @@
 
 ## What It Does
 
-PipelineIQ drops into any CI/CD pipeline as a single step and gives your infrastructure a brain:
+DriftOps drops into any CI/CD pipeline as a single step and gives your infrastructure a brain:
 
 | Stage | What happens |
 |---|---|
@@ -26,14 +26,14 @@ PipelineIQ drops into any CI/CD pipeline as a single step and gives your infrast
 Add this to your GitHub Actions workflow:
 
 ```yaml
-- name: PipelineIQ Scan
-  uses: pipelineiq1/pipelineiq@v1
+- name: DriftOps Scan
+  uses: driftops-dev/driftops@v1
   with:
     iac_path: './terraform'
     compliance_level: 'nist-800-53'
     enforce: false         # set true to block on violations
   env:
-    PIPELINEIQ_TOKEN: ${{ secrets.PIPELINEIQ_TOKEN }}
+    DRIFTOPS_TOKEN: ${{ secrets.DRIFTOPS_TOKEN }}
 ```
 
 ## Stack
@@ -51,7 +51,7 @@ Add this to your GitHub Actions workflow:
 ## Project Structure
 
 ```
-pipelineiq/
+driftops/
 ├── action/          # GitHub Action + ADO Extension
 ├── dashboard/       # Cloudflare Pages frontend
 ├── worker/          # Cloudflare Worker API

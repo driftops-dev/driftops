@@ -40,7 +40,7 @@ export default function AuthPage({ onAuth }) {
         {/* Logo */}
         <div style={styles.logo}>
           <div style={styles.logoIcon}>🧠</div>
-          <span style={styles.logoText}>PipelineIQ</span>
+          <span style={styles.logoText}>DriftOps</span>
         </div>
 
         <div style={styles.tagline}>Infrastructure Intelligence Platform</div>
@@ -94,7 +94,7 @@ export default function AuthPage({ onAuth }) {
 
         <div style={styles.footer}>
           Free forever for individuals &nbsp;·&nbsp;
-          <a href="https://github.com/pipelineiq1/pipelineiq" target="_blank" rel="noreferrer">
+          <a href="https://github.com/driftops-dev/driftops" target="_blank" rel="noreferrer">
             GitHub
           </a>
         </div>

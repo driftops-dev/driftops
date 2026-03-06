@@ -1,5 +1,5 @@
 /**
- * PipelineIQ — Main Action Entry Point
+ * DriftOps — Main Action Entry Point
  * Orchestrates: scan → diff → comply → AI report → gate → post comment
  */
 
@@ -19,7 +19,7 @@ const error = (msg) => console.log(`❌ ${msg}`);
 
 async function run() {
   try {
-    info('PipelineIQ starting scan...');
+    info('DriftOps starting scan...');
 
     // ── 1. Read inputs ──────────────────────────────────────────────────────
     const iacPath         = getInput('iac_path') || './terraform';
@@ -28,7 +28,7 @@ async function run() {
     const generateDiagram = getInput('generate_diagram') !== 'false';
     const postPRComment   = getInput('post_pr_comment') !== 'false';
     const severityThreshold = getInput('severity_threshold') || 'critical';
-    const pipelineIQToken = process.env.PIPELINEIQ_TOKEN;
+    const pipelineIQToken = process.env.DRIFTOPS_TOKEN;
 
     info(`Scanning: ${iacPath}`);
     info(`Compliance: ${complianceLevel}`);
@@ -48,7 +48,7 @@ async function run() {
     if (pipelineIQToken) {
       previousSnapshot = await fetchPreviousSnapshot(pipelineIQToken);
     } else {
-      warning('No PIPELINEIQ_TOKEN set — drift detection disabled for this run. Sign up free at pipelineiq.dev');
+      warning('No DRIFTOPS_TOKEN set — drift detection disabled for this run. Sign up free at driftops.dev');
     }
 
     // ── 4. Diff ─────────────────────────────────────────────────────────────
@@ -107,7 +107,7 @@ async function run() {
 
     // Print summary to console
     console.log('\n' + '═'.repeat(60));
-    console.log('  PIPELINEIQ SCAN COMPLETE');
+    console.log('  DRIFTOPS SCAN COMPLETE');
     console.log('═'.repeat(60));
     console.log(`  Score:      ${complianceScore}/100`);
     console.log(`  Resources:  ${currentSnapshot.resource_count}`);
@@ -118,20 +118,20 @@ async function run() {
 
     // ── 11. Fail if enforcing and critical violations exist ─────────────────
     if (shouldBlock) {
-      setFailed(`PipelineIQ blocked this deploy — ${criticalCount} critical NIST 800-53 violations must be resolved.`);
+      setFailed(`DriftOps blocked this deploy — ${criticalCount} critical NIST 800-53 violations must be resolved.`);
     }
 
   } catch (err) {
-    setFailed(`PipelineIQ error: ${err.message}\n${err.stack}`);
+    setFailed(`DriftOps error: ${err.message}\n${err.stack}`);
   }
 }
 
 /**
- * Fetch previous snapshot from PipelineIQ API
+ * Fetch previous snapshot from DriftOps API
  */
 async function fetchPreviousSnapshot(token) {
   try {
-    const workerUrl = process.env.PIPELINEIQ_WORKER_URL || 'https://pipelineiq1-worker.workers.dev';
+    const workerUrl = process.env.DRIFTOPS_WORKER_URL || 'https://driftops-dev-worker.workers.dev';
     const repo = process.env.GITHUB_REPOSITORY || 'unknown/unknown';
 
     const res = await fetch(`${workerUrl}/api/snapshots/latest?repo=${encodeURIComponent(repo)}`, {
@@ -148,11 +148,11 @@ async function fetchPreviousSnapshot(token) {
 }
 
 /**
- * Save current snapshot to PipelineIQ API
+ * Save current snapshot to DriftOps API
  */
 async function saveSnapshot(token, snapshot) {
   try {
-    const workerUrl = process.env.PIPELINEIQ_WORKER_URL || 'https://pipelineiq1-worker.workers.dev';
+    const workerUrl = process.env.DRIFTOPS_WORKER_URL || 'https://driftops-dev-worker.workers.dev';
     const repo = process.env.GITHUB_REPOSITORY || 'unknown/unknown';
     const sha = process.env.GITHUB_SHA || 'unknown';
 

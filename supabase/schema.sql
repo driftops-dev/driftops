@@ -1,6 +1,6 @@
--- PipelineIQ — Supabase Schema
+-- DriftOps — Supabase Schema
 -- Run this in your Supabase SQL editor
--- Project: pipelineiq | supabase.com
+-- Project: driftops | supabase.com
 
 -- ── Enable UUID extension ────────────────────────────────────────────────────
 create extension if not exists "uuid-ossp";

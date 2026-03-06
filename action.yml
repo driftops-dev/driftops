@@ -1,6 +1,6 @@
-name: 'PipelineIQ'
+name: 'DriftOps'
 description: 'AI-powered infrastructure compliance, drift detection, and auto-diagramming for your pipeline'
-author: 'PipelineIQ'
+author: 'DriftOps'
 
 branding:
   icon: 'shield'
