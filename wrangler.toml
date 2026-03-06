@@ -8,8 +8,8 @@ compatibility_flags = ["nodejs_compat"]
 
 [[kv_namespaces]]
 binding = "DRIFTOPS_KV"
-id = "REPLACE_WITH_YOUR_KV_ID"          # Run: wrangler kv:namespace create DRIFTOPS_KV
-preview_id = "REPLACE_WITH_PREVIEW_ID"
+id = "eb6bc49a8f7b4fe68e82dc23ce210a8e"          # Run: wrangler kv:namespace create DRIFTOPS_KV
+preview_id = "71c4101c20044c8081b40cda3c992294"
 
 [vars]
 ENVIRONMENT = "production"
