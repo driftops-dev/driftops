@@ -76,6 +76,12 @@ async function run() {
       complianceScore
     });
 
+    console.log('\n' + '─'.repeat(60))
+    console.log('  AI COMPLIANCE REPORT')
+    console.log('─'.repeat(60))
+    console.log(aiReport.report)
+    console.log('─'.repeat(60) + '\n')
+    
     // ── 7. Determine if we should block ────────────────────────────────────
     const shouldBlock = enforce && criticalCount > 0;
     if (shouldBlock) {

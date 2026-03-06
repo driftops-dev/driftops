@@ -391,7 +391,8 @@ function calculateComplianceScore(violations, totalResources) {
     }
   }
 
-  const maxPossiblePenalty = totalResources * criticalWeight;
+  const baseline = Math.max(totalResources, 20);
+  const maxPossiblePenalty = baseline * criticalWeight;
   const score = Math.max(0, Math.round(100 - (penaltyPoints / maxPossiblePenalty) * 100));
   return score;
 }
