@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DriftOps — Infrastructure Compliance Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080b0f;
+    --surface: #0d1117;
+    --surface2: #131920;
+    --border: #1e2a35;
+    --accent: #00d4ff;
+    --accent2: #00ff88;
+    --warn: #ff6b35;
+    --critical: #ff3366;
+    --text: #e2eaf2;
+    --muted: #5a7082;
+    --font-display: 'Syne', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-mono);
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* ── GRID BACKGROUND ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 3rem;
+    background: rgba(8,11,15,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.25rem;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .nav-logo span { color: var(--text); }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 2.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--accent); }
+
+  .nav-cta {
+    background: var(--accent);
+    color: var(--bg) !important;
+    padding: 0.5rem 1.25rem;
+    border-radius: 3px;
+    font-weight: 500;
+    transition: all 0.2s !important;
+  }
+
+  .nav-cta:hover {
+    background: #33ddff !important;
+    color: var(--bg) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(0,212,255,0.3);
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 8rem 2rem 4rem;
+    overflow: hidden;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    width: 800px;
+    height: 800px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(0,212,255,0.06) 0%, transparent 70%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(0,212,255,0.08);
+    border: 1px solid rgba(0,212,255,0.2);
+    border-radius: 100px;
+    padding: 0.35rem 1rem;
+    font-size: 0.75rem;
+    color: var(--accent);
+    letter-spacing: 0.06em;
+    margin-bottom: 2rem;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .badge-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent2);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.3); }
+  }
+
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.8rem, 7vw, 5.5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    max-width: 900px;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+
+  h1 em {
+    font-style: normal;
+    color: var(--accent);
+    position: relative;
+  }
+
+  .hero-sub {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    color: var(--muted);
+    max-width: 560px;
+    line-height: 1.7;
+    margin-top: 1.5rem;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2.5rem;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--bg);
+    padding: 0.85rem 2rem;
+    border-radius: 3px;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+  }
+
+  .btn-primary:hover {
+    background: #33ddff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0,212,255,0.35);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    padding: 0.85rem 2rem;
+    border-radius: 3px;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    text-decoration: none;
+    border: 1px solid var(--border);
+    transition: all 0.2s;
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* ── INSTALL SNIPPET ── */
+  .install-block {
+    margin-top: 3.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    width: 100%;
+    max-width: 640px;
+    text-align: left;
+    animation: fadeUp 0.6s 0.4s ease both;
+    position: relative;
+    z-index: 1;
+  }
+
+  .install-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 1rem;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .install-dots { display: flex; gap: 5px; }
+  .install-dots span {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+  }
+  .d1 { background: #ff5f57; }
+  .d2 { background: #febc2e; }
+  .d3 { background: #28c840; }
+
+  .install-code {
+    padding: 1.25rem 1.5rem;
+    font-size: 0.82rem;
+    line-height: 1.8;
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  .c-comment { color: var(--muted); }
+  .c-key { color: var(--accent); }
+  .c-val { color: var(--accent2); }
+  .c-str { color: #ffd080; }
+
+  /* ── PR COMMENT DEMO ── */
+  .demo-section {
+    position: relative;
+    z-index: 1;
+    padding: 6rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .section-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    text-align: center;
+    max-width: 600px;
+    margin-bottom: 1rem;
+  }
+
+  .section-sub {
+    color: var(--muted);
+    font-size: 0.9rem;
+    text-align: center;
+    max-width: 500px;
+    line-height: 1.7;
+    margin-bottom: 3rem;
+  }
+
+  .pr-comment-mock {
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 780px;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+  }
+
+  .pr-header {
+    background: #161b22;
+    border-bottom: 1px solid #30363d;
+    padding: 0.75rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.8rem;
+    color: #8b949e;
+  }
+
+  .pr-avatar {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--bg);
+    flex-shrink: 0;
+  }
+
+  .pr-meta strong { color: #e6edf3; }
+
+  .pr-body { padding: 1.5rem; }
+
+  .pr-title {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #e6edf3;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .score-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .score-bar {
+    flex: 1;
+    height: 8px;
+    background: #21262d;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .score-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    border-radius: 4px;
+    width: 84%;
+    animation: fillBar 1.5s 0.5s ease both;
+    transform-origin: left;
+  }
+
+  @keyframes fillBar {
+    from { width: 0; }
+    to { width: 84%; }
+  }
+
+  .score-num {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--accent2);
+    white-space: nowrap;
+  }
+
+  .pr-stats {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+  }
+
+  .pr-stat {
+    font-size: 0.78rem;
+    color: #8b949e;
+  }
+
+  .pr-stat strong { color: #e6edf3; }
+  .pr-stat .crit { color: var(--critical); }
+
+  .pr-section-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #e6edf3;
+    margin: 1.25rem 0 0.5rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid #21262d;
+  }
+
+  .pr-text {
+    font-size: 0.78rem;
+    color: #8b949e;
+    line-height: 1.7;
+    margin-bottom: 0.75rem;
+  }
+
+  .pr-actions-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .pr-actions-list li {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    font-size: 0.78rem;
+    color: #8b949e;
+    line-height: 1.6;
+  }
+
+  .action-num {
+    background: rgba(255,51,102,0.15);
+    color: var(--critical);
+    border: 1px solid rgba(255,51,102,0.3);
+    border-radius: 3px;
+    padding: 0.1rem 0.4rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .action-num.high {
+    background: rgba(255,107,53,0.15);
+    color: var(--warn);
+    border-color: rgba(255,107,53,0.3);
+  }
+
+  .pr-footer {
+    margin-top: 1.25rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #21262d;
+    font-size: 0.7rem;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .pr-footer a { color: var(--accent); text-decoration: none; }
+
+  /* ── HOW IT WORKS ── */
+  .steps-section {
+    position: relative;
+    z-index: 1;
+    padding: 6rem 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 3rem;
+  }
+
+  .step {
+    background: var(--surface);
+    padding: 2rem;
+    transition: background 0.2s;
+    position: relative;
+  }
+
+  .step:hover { background: var(--surface2); }
+
+  .step-num {
+    font-family: var(--font-display);
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--border);
+    line-height: 1;
+    margin-bottom: 1rem;
+  }
+
+  .step-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .step h3 {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.01em;
+  }
+
+  .step p {
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* ── FEATURES ── */
+  .features-section {
+    position: relative;
+    z-index: 1;
+    padding: 6rem 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+
+  .feature-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.75rem;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .feature-card:hover {
+    border-color: rgba(0,212,255,0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  }
+
+  .feature-card:hover::before { opacity: 1; }
+
+  .feature-icon {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .feature-card h3 {
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.01em;
+  }
+
+  .feature-card p {
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* ── PRICING ── */
+  .pricing-section {
+    position: relative;
+    z-index: 1;
+    padding: 6rem 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+    margin-top: 3rem;
+    align-items: start;
+  }
+
+  .pricing-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 2rem;
+    position: relative;
+  }
+
+  .pricing-card.featured {
+    border-color: var(--accent);
+    box-shadow: 0 0 40px rgba(0,212,255,0.1);
+  }
+
+  .featured-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent);
+    color: var(--bg);
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.75rem;
+    border-radius: 100px;
+  }
+
+  .plan-name {
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .plan-price {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .plan-price span {
+    font-size: 1rem;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  .plan-desc {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin: 0.75rem 0 1.5rem;
+    line-height: 1.6;
+  }
+
+  .plan-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-bottom: 2rem;
+  }
+
+  .plan-features li {
+    font-size: 0.78rem;
+    color: var(--muted);
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+    line-height: 1.5;
+  }
+
+  .plan-features li::before {
+    content: '→';
+    color: var(--accent2);
+    flex-shrink: 0;
+  }
+
+  .plan-btn {
+    display: block;
+    text-align: center;
+    padding: 0.75rem;
+    border-radius: 3px;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .plan-btn-outline {
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+
+  .plan-btn-outline:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .plan-btn-filled {
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+  }
+
+  .plan-btn-filled:hover {
+    background: #33ddff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(0,212,255,0.3);
+  }
+
+  /* ── SOCIAL PROOF ── */
+  .stats-bar {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .stat-item {
+    padding: 2.5rem 3rem;
+    text-align: center;
+    border-right: 1px solid var(--border);
+    flex: 1;
+    min-width: 180px;
+  }
+
+  .stat-item:last-child { border-right: none; }
+
+  .stat-num {
+    font-family: var(--font-display);
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--accent);
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 0.4rem;
+  }
+
+  .stat-label {
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* ── CTA ── */
+  .cta-section {
+    position: relative;
+    z-index: 1;
+    padding: 8rem 2rem;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .cta-section::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(0,255,136,0.05) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .cta-section h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    max-width: 700px;
+    margin: 0 auto 1rem;
+  }
+
+  .cta-section p {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-bottom: 2.5rem;
+    line-height: 1.7;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--border);
+    padding: 2rem 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: gap;
+  }
+
+  .footer-logo {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1rem;
+    color: var(--accent);
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .footer-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.75rem;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--accent); }
+
+  .footer-copy {
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .hero-actions { flex-direction: column; align-items: center; }
+    .stat-item { border-right: none; border-bottom: 1px solid var(--border); }
+    footer { flex-direction: column; gap: 1rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">⬡ <span>Drift</span>Ops</div>
+  <ul class="nav-links">
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="https://github.com/driftops-dev/driftops" target="_blank">GitHub</a></li>
+    <li><a href="https://driftops.pages.dev" class="nav-cta">Open Dashboard →</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">
+    <span class="badge-dot"></span>
+    Now scanning NIST 800-53 Rev 5 · Free to start
+  </div>
+
+  <h1>Your infrastructure<br>deserves a <em>brain</em></h1>
+
+  <p class="hero-sub">
+    One pipeline step. AI-powered compliance checks, drift detection, and plain-English fix instructions — posted to every PR automatically.
+  </p>
+
+  <div class="hero-actions">
+    <a href="https://driftops.pages.dev" class="btn-primary">Start free →</a>
+    <a href="https://github.com/driftops-dev/driftops" class="btn-secondary">View on GitHub</a>
+  </div>
+
+  <div class="install-block">
+    <div class="install-header">
+      <div class="install-dots">
+        <span class="d1"></span><span class="d2"></span><span class="d3"></span>
+      </div>
+      <span>.github/workflows/driftops.yml</span>
+      <span>3 lines to get started</span>
+    </div>
+    <div class="install-code"><span class="c-comment"># Add to any repo with Terraform</span>
+<span class="c-key">- name:</span> <span class="c-str">DriftOps Compliance Scan</span>
+  <span class="c-key">uses:</span> <span class="c-val">driftops-dev/driftops@v1</span>
+  <span class="c-key">with:</span>
+    <span class="c-key">iac_path:</span> <span class="c-str">'./terraform'</span>
+    <span class="c-key">compliance_level:</span> <span class="c-str">'nist-800-53'</span>
+    <span class="c-key">enforce:</span> <span class="c-val">false</span></div>
+  </div>
+</section>
+
+<!-- PR DEMO -->
+<section class="demo-section" id="demo">
+  <div class="section-label">// live demo</div>
+  <h2 class="section-title">Every PR gets an AI compliance report</h2>
+  <p class="section-sub">DriftOps automatically posts a detailed report as a PR comment — score, violations, and copy-paste Terraform fixes.</p>
+
+  <div class="pr-comment-mock">
+    <div class="pr-header">
+      <div class="pr-avatar">DO</div>
+      <div class="pr-meta"><strong>github-actions</strong> bot commented just now</div>
+    </div>
+    <div class="pr-body">
+      <div class="pr-title">✅ DriftOps — Infrastructure Compliance Report</div>
+
+      <div class="score-bar-wrap">
+        <div class="score-bar"><div class="score-fill"></div></div>
+        <div class="score-num">84/100</div>
+      </div>
+
+      <div class="pr-stats">
+        <div class="pr-stat">Status: <strong>Passed</strong></div>
+        <div class="pr-stat">Violations: <strong class="crit">4 (3 critical)</strong></div>
+        <div class="pr-stat">Drift: <strong>✅ None detected</strong></div>
+        <div class="pr-stat">Resources: <strong>5 scanned</strong></div>
+      </div>
+
+      <div class="pr-section-title">Executive Summary</div>
+      <p class="pr-text">Initial scan identified critical security vulnerabilities requiring immediate attention. Three critical violations detected across database, storage, and IAM configurations that must be remediated before production deployment.</p>
+
+      <div class="pr-section-title">Top 3 Immediate Actions</div>
+      <ul class="pr-actions-list">
+        <li>
+          <span class="action-num">CRIT</span>
+          Enable storage encryption for <code>aws_db_instance.insecure_db</code> — set <code>storage_encrypted = true</code> in database_violations.tf
+        </li>
+        <li>
+          <span class="action-num">CRIT</span>
+          Configure server-side encryption for <code>aws_s3_bucket.public_bucket</code> — add <code>server_side_encryption_configuration</code> block with AES256
+        </li>
+        <li>
+          <span class="action-num high">HIGH</span>
+          Restrict IAM policy <code>aws_iam_policy.over_privileged</code> — enforce least privilege, remove wildcard permissions
+        </li>
+      </ul>
+
+      <div class="pr-footer">
+        🔷 Powered by DriftOps · NIST 800-53 Rev 5 · <a href="https://driftops.pages.dev">driftops.dev</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="stat-num">$0</div>
+    <div class="stat-label">to get started</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">11</div>
+    <div class="stat-label">NIST 800-53 control families</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">2s</div>
+    <div class="stat-label">avg scan time</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">7+</div>
+    <div class="stat-label">CI/CD platforms</div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="steps-section" id="how">
+  <div style="text-align:center">
+    <div class="section-label">// how it works</div>
+    <h2 class="section-title">From zero to compliant in one deploy</h2>
+    <p class="section-sub">Add 3 lines to your pipeline. Everything else is automatic.</p>
+  </div>
+  <div class="steps-grid">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-icon">📦</div>
+      <h3>Add to your pipeline</h3>
+      <p>Drop 3 lines of YAML into any GitHub Actions, Azure DevOps, GitLab, or Jenkins workflow. No agents, no sidecars, no infrastructure to manage.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-icon">🔍</div>
+      <h3>Scan on every deploy</h3>
+      <p>DriftOps scans your Terraform, ARM, and CDK files. Builds a full resource inventory. Snapshots state. Diffs vs prior deploy to detect drift.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-icon">🏛️</div>
+      <h3>Benchmark against NIST</h3>
+      <p>AI reads NIST 800-53 Rev 5 and maps every control to your actual infrastructure. Scores 0–100. Flags critical violations with exact resource names.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <div class="step-icon">🧠</div>
+      <h3>AI writes the fix</h3>
+      <p>Generates a plain-English compliance report with copy-paste Terraform fixes. Posts it as a PR comment automatically. No dashboards to check.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section" id="features">
+  <div style="text-align:center">
+    <div class="section-label">// capabilities</div>
+    <h2 class="section-title">Everything your pipeline needs</h2>
+    <p class="section-sub">Built for DevOps engineers who don't have time for security theater.</p>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🎯</div>
+      <h3>NIST 800-53 Rev 5</h3>
+      <p>Full coverage across AC, AU, CM, IA, SC, SI control families. AI interprets the actual standard — not hardcoded rules.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📡</div>
+      <h3>Drift Detection</h3>
+      <p>Snapshots infrastructure state on every deploy. Diffs vs prior commit. Catches unauthorized changes before they hit production.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">💬</div>
+      <h3>PR Comments</h3>
+      <p>AI-written compliance report posted automatically on every pull request. Score bar, violations, risk assessment, and fix instructions.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔒</div>
+      <h3>Enforce Mode</h3>
+      <p>Optionally block deploys when critical violations are found. Gate keeper for your entire infrastructure lifecycle.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🗺️</div>
+      <h3>Auto Diagrams</h3>
+      <p>Generates L1–L4 architecture diagrams on every deploy. Always up to date. Never out of sync with reality. <em style="color:var(--muted)">(Coming soon)</em></p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <h3>Platform Agnostic</h3>
+      <p>GitHub Actions, Azure DevOps, GitLab CI, Jenkins, CircleCI, Bitbucket, AWS CodePipeline. Works everywhere your code runs.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section" id="pricing">
+  <div style="text-align:center">
+    <div class="section-label">// pricing</div>
+    <h2 class="section-title">Start free. Scale when ready.</h2>
+    <p class="section-sub">No credit card required. No enterprise sales calls. No $500K contracts.</p>
+  </div>
+  <div class="pricing-grid">
+    <div class="pricing-card">
+      <div class="plan-name">Free</div>
+      <div class="plan-price">$0<span>/mo</span></div>
+      <div class="plan-desc">For individuals and open source projects.</div>
+      <ul class="plan-features">
+        <li>Up to 3 repositories</li>
+        <li>100 scans / month</li>
+        <li>NIST 800-53 compliance</li>
+        <li>PR comments</li>
+        <li>Drift detection</li>
+        <li>Dashboard access</li>
+      </ul>
+      <a href="https://driftops.pages.dev" class="plan-btn plan-btn-outline">Get started free</a>
+    </div>
+    <div class="pricing-card featured">
+      <div class="featured-badge">Most Popular</div>
+      <div class="plan-name">Team</div>
+      <div class="plan-price">$99<span>/mo</span></div>
+      <div class="plan-desc">For growing engineering teams that ship fast.</div>
+      <ul class="plan-features">
+        <li>Unlimited repositories</li>
+        <li>Unlimited scans</li>
+        <li>NIST + CIS Benchmarks</li>
+        <li>Enforce mode</li>
+        <li>Auto-diagrams</li>
+        <li>Slack notifications</li>
+        <li>Priority support</li>
+      </ul>
+      <a href="https://driftops.pages.dev" class="plan-btn plan-btn-filled">Start 14-day trial</a>
+    </div>
+    <div class="pricing-card">
+      <div class="plan-name">Enterprise</div>
+      <div class="plan-price">Custom</div>
+      <div class="plan-desc">For organizations with compliance requirements.</div>
+      <ul class="plan-features">
+        <li>Everything in Team</li>
+        <li>SOC 2 + ISO 27001</li>
+        <li>SSO / SAML</li>
+        <li>Audit logs</li>
+        <li>SLA guarantee</li>
+        <li>Dedicated support</li>
+        <li>On-prem option</li>
+      </ul>
+      <a href="mailto:hello@driftops.dev" class="plan-btn plan-btn-outline">Contact us</a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2>Ship faster.<br>Stay compliant.</h2>
+  <p>Join engineers who've stopped manually reviewing infrastructure<br>and started letting DriftOps do it on every PR.</p>
+  <div class="hero-actions" style="justify-content:center">
+    <a href="https://driftops.pages.dev" class="btn-primary">Open dashboard free →</a>
+    <a href="https://github.com/driftops-dev/driftops" class="btn-secondary">Star on GitHub ⭐</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">⬡ DriftOps</div>
+  <ul class="footer-links">
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="https://github.com/driftops-dev/driftops" target="_blank">GitHub</a></li>
+    <li><a href="https://driftops.pages.dev">Dashboard</a></li>
+  </ul>
+  <div class="footer-copy">© 2026 DriftOps. Built for DevOps engineers.</div>
+</footer>
+
+</body>
+</html>
