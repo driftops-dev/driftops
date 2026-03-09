@@ -137,7 +137,7 @@ async function run() {
  */
 async function fetchPreviousSnapshot(token) {
   try {
-    const workerUrl = process.env.DRIFTOPS_WORKER_URL || 'https://driftops-dev-worker.workers.dev';
+    const workerUrl = process.env.DRIFTOPS_WORKER_URL || 'https://driftops-dev-worker.driftops.workers.dev';
     const repo = process.env.GITHUB_REPOSITORY || 'unknown/unknown';
 
     const res = await fetch(`${workerUrl}/api/snapshots/latest?repo=${encodeURIComponent(repo)}`, {
@@ -158,7 +158,7 @@ async function fetchPreviousSnapshot(token) {
  */
 async function saveSnapshot(token, snapshot) {
   try {
-    const workerUrl = process.env.DRIFTOPS_WORKER_URL || 'https://driftops-dev-worker.workers.dev';
+    const workerUrl = process.env.DRIFTOPS_WORKER_URL || 'https://driftops-dev-worker.driftops.workers.dev';
     const repo = process.env.GITHUB_REPOSITORY || 'unknown/unknown';
     const sha = process.env.GITHUB_SHA || 'unknown';
 
