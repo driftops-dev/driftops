@@ -11,7 +11,7 @@ const { generateComplianceReport, formatPRComment } = require('./ai');
 // GitHub Actions core (injected at build time via @actions/core)
 // For POC we use env vars directly
 const getInput = (name) => process.env[`INPUT_${name.toUpperCase().replace(/-/g, '_')}`] || '';
-const setOutput = (name, value) => console.log(`::set-output name=${name}::${value}`);
+const setOutput = (name, value) => { const fs = require('fs'); const envFile = process.env.GITHUB_OUTPUT; if (envFile) { fs.appendFileSync(envFile, `${name}=${value}\n`); } else { console.log(`${name}=${value}`); } };
 const setFailed = (msg) => { console.error(`::error::${msg}`); process.exit(1); };
 const info = (msg) => console.log(`ℹ️  ${msg}`);
 const warning = (msg) => console.log(`⚠️  ${msg}`);
