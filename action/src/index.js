@@ -53,7 +53,7 @@ async function run() {
 
     // ── 4. Diff ─────────────────────────────────────────────────────────────
     info('🔄 Comparing to prior state...');
-    const diff = diffSnapshots(previousSnapshot, currentSnapshot);
+    const diff = diffSnapshots(previousSnapshot && previousSnapshot.snapshot ? previousSnapshot.snapshot : previousSnapshot, currentSnapshot);
     info(diff.summary);
 
     // ── 5. NIST compliance checks ───────────────────────────────────────────
