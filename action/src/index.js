@@ -82,13 +82,18 @@ async function run() {
     console.log(aiReport.report)
     console.log('─'.repeat(60) + '\n')
     
-    // ── 7. Determine if we should block ────────────────────────────────────
+    // ── 7. Save snapshot first (before any exit) ────────────────────────────
+    if (pipelineIQToken) {
+      await saveSnapshot(pipelineIQToken, currentSnapshot);
+    }
+
+    // ── 8. Determine if we should block ────────────────────────────────────
     const shouldBlock = enforce && criticalCount > 0;
     if (shouldBlock) {
       error(`Blocking deploy — ${criticalCount} critical NIST violations found.`);
     }
 
-    // ── 8. Post PR comment ─────────────────────────────────────────────────
+    // ── 9. Post PR comment ─────────────────────────────────────────────────
     if (postPRComment && process.env.GITHUB_TOKEN) {
       const comment = formatPRComment({
         report: aiReport,
@@ -98,11 +103,6 @@ async function run() {
         blocked: shouldBlock
       });
       await postGitHubComment(comment);
-    }
-
-    // ── 9. Save snapshot ────────────────────────────────────────────────────
-    if (pipelineIQToken) {
-      await saveSnapshot(pipelineIQToken, currentSnapshot);
     }
 
     // ── 10. Set outputs ─────────────────────────────────────────────────────
