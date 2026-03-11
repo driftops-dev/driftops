@@ -56,7 +56,7 @@ export default {
       if (!repo) return respond({ error: 'repo param required' }, 400);
 
       const key = `snapshots:${userId}:${repo}:latest`;
-      const data = await env.PIPELINEIQ_KV.get(key, 'json');
+      const data = await env.DRIFTOPS_KV.get(key, 'json');
 
       if (!data) return respond({ error: 'No prior snapshot found' }, 404);
       return respond(data);
@@ -73,14 +73,14 @@ export default {
       const record = { repo, sha, snapshot, timestamp, userId };
 
       // Save as latest
-      await env.PIPELINEIQ_KV.put(
+      await env.DRIFTOPS_KV.put(
         `snapshots:${userId}:${repo}:latest`,
         JSON.stringify(record),
         { expirationTtl: 60 * 60 * 24 * 90 } // 90 days
       );
 
       // Save to history (keyed by sha)
-      await env.PIPELINEIQ_KV.put(
+      await env.DRIFTOPS_KV.put(
         `snapshots:${userId}:${repo}:${sha}`,
         JSON.stringify(record),
         { expirationTtl: 60 * 60 * 24 * 30 } // 30 days for history
@@ -96,9 +96,9 @@ export default {
         ? `scans:${userId}:${repo}:`
         : `scans:${userId}:`;
 
-      const list = await env.PIPELINEIQ_KV.list({ prefix, limit: 50 });
+      const list = await env.DRIFTOPS_KV.list({ prefix, limit: 50 });
       const scans = await Promise.all(
-        list.keys.map(k => env.PIPELINEIQ_KV.get(k.name, 'json'))
+        list.keys.map(k => env.DRIFTOPS_KV.get(k.name, 'json'))
       );
 
       return respond(scans.filter(Boolean).reverse());
@@ -119,7 +119,7 @@ export default {
         timestamp, userId
       };
 
-      await env.PIPELINEIQ_KV.put(
+      await env.DRIFTOPS_KV.put(
         `scans:${userId}:${repo}:${timestamp}`,
         JSON.stringify(record),
         { expirationTtl: 60 * 60 * 24 * 90 }
@@ -131,9 +131,9 @@ export default {
     // GET /api/dashboard — aggregated stats for the dashboard
     if (path === '/api/dashboard' && request.method === 'GET') {
       const prefix = `scans:${userId}:`;
-      const list = await env.PIPELINEIQ_KV.list({ prefix, limit: 100 });
+      const list = await env.DRIFTOPS_KV.list({ prefix, limit: 100 });
       const scans = (await Promise.all(
-        list.keys.map(k => env.PIPELINEIQ_KV.get(k.name, 'json'))
+        list.keys.map(k => env.DRIFTOPS_KV.get(k.name, 'json'))
       )).filter(Boolean);
 
       const repos = [...new Set(scans.map(s => s.repo))];
@@ -164,6 +164,20 @@ export default {
       return respond({ valid, userId });
     }
 
+    // POST /api/tokens — register an API token
+    if (path === '/api/tokens' && request.method === 'POST') {
+      const body = await request.json();
+      const { apiToken } = body;
+      if (!apiToken) return respond({ error: 'apiToken required' }, 400);
+      const tokenHash = await hashToken(apiToken);
+      await env.DRIFTOPS_KV.put(
+        `api_token:${tokenHash}`,
+        JSON.stringify({ userId, createdAt: new Date().toISOString() }),
+        { expirationTtl: 60 * 60 * 24 * 365 } // 1 year
+      );
+      return respond({ success: true });
+    }
+
     return respond({ error: 'Not found' }, 404);
   }
 };
@@ -172,14 +186,30 @@ export default {
  * Validate a Supabase JWT token
  * In production this verifies against Supabase's JWKS endpoint
  */
+async function hashToken(token) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(token);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
 async function validateToken(token, env) {
   try {
-    // For POC: validate against Supabase auth API
+    // First: check if it's a simple API token stored in KV
+    if (env.DRIFTOPS_KV && token.length < 100) {
+      const tokenHash = await hashToken(token);
+      const apiTokenData = await env.DRIFTOPS_KV.get(`api_token:${tokenHash}`, 'json');
+      if (apiTokenData && apiTokenData.userId) {
+        return apiTokenData.userId;
+      }
+    }
+
+    // Second: try Supabase JWT validation
     const supabaseUrl = env.SUPABASE_URL;
     const supabaseKey = env.SUPABASE_SERVICE_KEY;
 
     if (!supabaseUrl || !supabaseKey) {
-      // Dev mode: accept any non-empty token
       return token ? 'dev-user' : null;
     }
 
