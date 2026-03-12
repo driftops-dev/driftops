@@ -60,8 +60,8 @@ export default function App() {
 function LoadingScreen() {
   return (
     <div style={styles.loading}>
-      <div style={styles.loadingLogo}>🧠</div>
-      <div style={styles.loadingText}>PipelineIQ</div>
+      <div style={styles.loadingLogo}>⬡</div>
+      <div style={styles.loadingText}>DriftOps</div>
       <div style={styles.loadingDots}>
         <span style={{ animationDelay: '0s' }} className="animate-pulse">▪</span>
         <span style={{ animationDelay: '0.2s' }} className="animate-pulse">▪</span>
