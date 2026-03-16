@@ -9,7 +9,12 @@ const { generateComplianceReport, formatPRComment } = require('./ai');
 const WORKER_URL = 'https://driftops-dev-worker.driftops.workers.dev';
 
 const getInput = (name) => process.env[`INPUT_${name.toUpperCase().replace(/-/g, '_')}`] || '';
-const setOutput = (name, value) => console.log(`::set-output name=${name}::${value}`);
+const setOutput = (name, value) => {
+  const fs = require('fs');
+  if (process.env.GITHUB_OUTPUT) {
+    fs.appendFileSync(process.env.GITHUB_OUTPUT, `${name}=${value}\n`);
+  }
+};
 const setFailed = (msg) => { console.error(`::error::${msg}`); process.exit(1); };
 const info = (msg) => console.log(`ℹ️  ${msg}`);
 const warning = (msg) => console.log(`⚠️  ${msg}`);
